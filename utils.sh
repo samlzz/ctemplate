@@ -50,16 +50,17 @@ pinit() {
 	curr_dir=$(pwd)
 
 	#? tmp_dir doesn't exist ? reitriving from github
-	if [ -z "$tmp_dir"]; then
+	if [ -d "$tmp_dir" ]; then
 		git clone git@github.com:samlzz/template.git "$tmp_dir"
 	fi
 	cp "$tmp_dir/.gitignore" "$curr_dir"
 
-	if [ "$1" = "noMake" ] || [ "$1" = "nomake"] || ["$1" = "no"]; then
+	if [ "$1" = "noMake" ] || [ "$1" = "nomake" ] || ["$1" = "no" ]; then
 		return 0
 	fi
 
-	read -p "Votre projet contiendra-t-il la libft ? (y/n)[y]: " include_libft		
+	echo -n "Votre projet utilisera-t-il la libft ? (y/n) [y]: "
+	read include_libft		
 	if [ -z "$include_libft" ]; then
         include_libft="y"
     fi
