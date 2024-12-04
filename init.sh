@@ -29,4 +29,5 @@ if [ ! -f "$config_file" ]; then
 fi
 
 cat ./utils.sh >> "$config_file"
-echo "Successfully configured 'utils.sh' functions'
+echo "Successfully configured 'utils.sh' functions'"
+source "$config_file"

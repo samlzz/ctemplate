@@ -68,12 +68,12 @@ hcreate() {
 
 #? init current directory to be a project directory
 ftinit() {
-	tmp_dir="$HOME/template"  #? exemples files dir
+	tmp_dir="$HOME/ctemplate"  #? exemples files dir
 	curr_dir=$(pwd)
 
 	#? tmp_dir doesn't exist ? reitriving from github
 	if [ -d "$tmp_dir" ]; then
-		echo -n "'template' folder not found in home directory, retrieving it from github (y/n) [y]:"
+		echo -n "'ctemplate' folder not found in home directory, retrieving it from github (y/n) [y]:"
 		read retriev
 		if [ -z "$retriev" ]; then
 			retriev="y"
