@@ -1,17 +1,30 @@
 #* Alias part
 
-alias la="ls --all"
 alias cl="clear"
+alias la="ls --all"
 alias vl="valgrind"
 alias ccw="gcc -Wall -Wextra -Werror"
 
-#* func
-mkcd() {
-    if [ -n "$1" ]; then
-        mkdir -p "$1" && cd "$1"
-    else
-        echo "Erreur : aucun nom de répertoire spécifié."
-    fi
+#* Functions
+
+function exinit {
+	local target_dir="$1"
+	local curr_dir="$PWD"
+
+	while [[ "$curr_dir" != "/" ]];
+	do
+		if [[ -d "$curr_dir/.exemple" ]];
+		then
+			mkdir "$target_dir"
+            cp -r "$curr_dir/.exemple/." "$target_dir/"
+			echo "$target_dir was correctly init from $curr_dir"
+			return
+		fi
+		curr_dir="$(dirname "$curr_dir")"
+	done
+
+	echo "Error: No `.exemple` folder founded."
+	exit 1
 }
 
 #? for get the prototype of a function in man
@@ -25,41 +38,59 @@ manproto() {
 	fi
 }
 
-#? create an .h file with is assosiated .c
-hcreate() {
-	if [ -z "$1" ]; then
-		echo "Erreur : aucun nom de fichier specifie"
-		exit 1
-	fi
+ccreate() {
 	filename=$1
+	c=$2
+	h=$3
 	def_name=$(echo "$filename" | tr '[:lower:]' '[:upper:]')_H
 	
-	touch "$filename.h"
-	echo "#ifndef $def_name" > "$filename.h"
-	echo "# define $def_name" >> "$filename.h"
-	echo "" >> "$filename.h"
-	echo "#endif" >> "$filename.h"
-	
-	echo "#include \"$filename.h\"" > "$filename.c"
-	echo "Le fichier $filename.h a bien ete creer"
+	touch "$filename.$h"
+	touch "$filename.$c"
+
+	echo "#ifndef $def_name" > "$filename.$h"
+	echo "# define $def_name" >> "$filename.$h"
+	echo "" >> "$filename.$h"
+	echo "#endif" >> "$filename.$h"
+
+	echo "#include \"$filename.$h\"" > "$filename.$c"
+    echo "Les fichiers(.$h, .$c) ont bien ete creer"
+}
+
+#? create an .hpp file with is assosiated .cpp
+hppcreate() {
+	ccreate cpp hpp
+}
+
+#? create an .h file with is assosiated .c
+hcreate() {
+	ccreate c h
 }
 
 #? init current directory to be a project directory
-pinit() {
+ftinit() {
 	tmp_dir="$HOME/template"  #? exemples files dir
 	curr_dir=$(pwd)
 
 	#? tmp_dir doesn't exist ? reitriving from github
 	if [ -d "$tmp_dir" ]; then
-		git clone git@github.com:samlzz/template.git "$tmp_dir"
+		echo -n "'template' folder not found in home directory, retrieving it from github (y/n) [y]:"
+		read retriev
+		if [ -z "$retriev" ]; then
+			retriev="y"
+		fi
+		if [ "$include_libft" = "y" ] || [ "$include_libft" = "Y" ]; then
+			git clone git@github.com:samlzz/template.git "$tmp_dir"
+		else
+			exit 1
+		fi
 	fi
 	cp "$tmp_dir/.gitignore" "$curr_dir"
 
-	if [ "$1" = "noMake" ] || [ "$1" = "nomake" ] || ["$1" = "no" ]; then
-		return 0
+	if [ "$1" = "--noMake" ] || [ "$1" = "--nomake" ] || ["$1" = "-nm" ]; then
+		return
 	fi
 
-	echo -n "Votre projet utilisera-t-il la libft ? (y/n) [y]: "
+	echo -n "Did your project will use libft ? (y/n) [y]: "
 	read include_libft		
 	if [ -z "$include_libft" ]; then
         include_libft="y"
