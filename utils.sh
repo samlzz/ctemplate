@@ -58,12 +58,12 @@ ccreate() {
 
 #? create an .hpp file with is assosiated .cpp
 hppcreate() {
-	ccreate cpp hpp
+	ccreate $1 cpp hpp
 }
 
 #? create an .h file with is assosiated .c
 hcreate() {
-	ccreate c h
+	ccreate $1 c h
 }
 
 #? init current directory to be a project directory
