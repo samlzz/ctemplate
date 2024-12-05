@@ -1,6 +1,6 @@
 # C Project Utilities Repository
 
-This repository is designed to provide utility files and templates for C projects. It contains resources to streamline the setup of Makefiles, configuration files, and utilities for projects that use or do not use the `libft` library. Below is an explanation of each file and its purpose.
+This repository is designed to provide utility files and templates for C projects. It contains resources to streamline the setup of Makefiles, configuration files, and utilities for projects. Below is an explanation of each file and its purpose.
 
 ## Contents
 
@@ -105,7 +105,7 @@ Here is a detailed explanation of the aliases and functions, their purposes, and
      - Automatically includes the header file in the source file.
    - **Do not use**:
      - This function is an auxiliair function for hppcreate and hcreate functions
-	 - It is not protected from bad entries, so i preconised to use already existing functions or create your that will use this one.
+     - It is not protected from bad inputs, so I recommend using the already existing functions or creating your own that will use this one.
 
 #### 4. **`hppcreate`**
 
@@ -156,7 +156,7 @@ Here is a detailed explanation of the aliases and functions, their purposes, and
 
 ### Makefile Usage Guide (Non-`libft` Projects)
 
-This Makefile is designed for C projects **not using the `libft` library**. It automates common build tasks, such as compiling, linking, cleaning, and running your project. Here's a quick guide on how to use it:
+This Makefile is designed for C projects **not using the `libft` library**. It automates common build tasks, such as compiling, linking, cleaning, and running your project.
 
 ### **Key Variables**
 
@@ -183,7 +183,6 @@ This Makefile is designed for C projects **not using the `libft` library**. It a
   - Links the object files to create the final executable or library (`NAME`).
 
 - **`make clean`**: Deletes all object files (`.o`) and removes the `OBJ_DIR`.
-  - Does not delete the final executable.
 
 - **`make fclean`**: Performs `clean` and also deletes the final executable (`NAME`).
 
@@ -199,13 +198,12 @@ This Makefile is designed for C projects **not using the `libft` library**. It a
 
 ### **Features**
 
-- **Automatic Object File Handling**: Source files are automatically converted into object files stored in `OBJ_DIR`.
+- **Flexible Linking**: Automatically detects whether to create an archive (`.a`) or an executable based on the `NAME` variable.
 - **Color-Coded Outputs**: The Makefile uses colors to distinguish between different stages of the build process:
   - **Yellow**: Compilation.
   - **Green**: Successful builds.
   - **Blue**: Cleaning object files.
   - **Cyan**: Cleaning executables.
-- **Flexible Linking**: Automatically detects whether to create an archive (`.a`) or an executable based on the `NAME` variable.
 
 ---
 
@@ -243,7 +241,7 @@ This Makefile is specifically designed for C projects that **require integration
 
 ---
 
-### **3. `dellib`**
+**3. `dellib`**
 - **Purpose**: Deletes the `libft` directory and all its contents.
 - **How it works**:
   - Removes the `libft` directory entirely.
