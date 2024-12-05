@@ -7,7 +7,11 @@ alias ccw="gcc -Wall -Wextra -Werror"
 
 #* Functions
 
-function exinit {
+exinit() {
+	if [ -z "$1" ]; then
+        echo "Error: No target dir provided."
+        exit 1
+	fi
 	local target_dir="$1"
 	local curr_dir="$PWD"
 
@@ -15,7 +19,7 @@ function exinit {
 	do
 		if [[ -d "$curr_dir/.exemple" ]];
 		then
-			mkdir "$target_dir"
+			mkdir -p "$target_dir"
             cp -r "$curr_dir/.exemple/." "$target_dir/"
 			echo "$target_dir was correctly init from $curr_dir"
 			return
@@ -29,6 +33,10 @@ function exinit {
 
 #? for get the prototype of a function in man
 manproto() {
+	if [ -z "$1" ]; then
+        echo "Error: No function name provided."
+        exit 1
+	fi
 	result=$(man "$1" | grep "$1(" -A 1 | head -5)
 	section=$(echo "$result" | grep -oP "$1\(\K[0-9]+")
 	if [[ $section =~ ^[0-9]+$ ]]; then
@@ -44,8 +52,7 @@ ccreate() {
 	h=$3
 	def_name=$(echo "$filename" | tr '[:lower:]' '[:upper:]')_H
 	
-	touch "$filename.$h"
-	touch "$filename.$c"
+	touch "$filename.$h" "$filename.$c"
 
 	echo "#ifndef $def_name" > "$filename.$h"
 	echo "# define $def_name" >> "$filename.$h"
@@ -53,17 +60,25 @@ ccreate() {
 	echo "#endif" >> "$filename.$h"
 
 	echo "#include \"$filename.$h\"" > "$filename.$c"
-    echo "Les fichiers(.$h, .$c) ont bien ete creer"
+    echo "Files(.$h, .$c) were created successfully"
 }
 
 #? create an .hpp file with is assosiated .cpp
 hppcreate() {
-	ccreate $1 cpp hpp
+	if [ -z "$1" ]; then
+        echo "Error: No filename provided."
+        exit 1
+	fi
+	ccreate "$1" cpp hpp
 }
 
 #? create an .h file with is assosiated .c
 hcreate() {
-	ccreate $1 c h
+	if [ -z "$1" ]; then
+        echo "Error: No filename provided."
+        exit 1
+	fi
+	ccreate "$1" c h
 }
 
 #? init current directory to be a project directory
@@ -72,30 +87,30 @@ ftinit() {
 	curr_dir=$(pwd)
 
 	#? tmp_dir doesn't exist ? reitriving from github
-	if [ -d "$tmp_dir" ]; then
+	if [ ! -d "$tmp_dir" ]; then
 		echo -n "'ctemplate' folder not found in home directory, retrieving it from github (y/n) [y]:"
-		read retriev
-		if [ -z "$retriev" ]; then
-			retriev="y"
-		fi
-		if [ "$include_libft" = "y" ] || [ "$include_libft" = "Y" ]; then
-			git clone git@github.com:samlzz/template.git "$tmp_dir"
+		read -r retriev
+		retriev=${retriev:-y}
+		if [[ "$retriev" =~ ^[yY]$ ]]; then
+			git clone git@github.com:samlzz/template.git "$tmp_dir" || {
+                echo "Error: Failed to clone repository."
+                exit 1
+            }
 		else
 			exit 1
 		fi
 	fi
+
 	cp "$tmp_dir/.gitignore" "$curr_dir"
 
-	if [ "$1" = "--noMake" ] || [ "$1" = "--nomake" ] || ["$1" = "-nm" ]; then
-		return
-	fi
+    if [[ "$1" =~ ^(--noMake|--nomake|-nm)$ ]]; then
+        return
+    fi
 
 	echo -n "Did your project will use libft ? (y/n) [y]: "
-	read include_libft		
-	if [ -z "$include_libft" ]; then
-        include_libft="y"
-    fi
-	if [ "$include_libft" = "y" ] || [ "$include_libft" = "Y" ]; then
+	read -r include_libft		
+	include_libft=${include_libft:-y}
+	if [[ "$include_libft" =~ ^[yY]$ ]]; then
 		cp "$tmp_dir/libftMakefile" "$curr_dir/Makefile"
 	else
 		cp "$tmp_dir/Makefile" "$curr_dir/Makefile"
