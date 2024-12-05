@@ -48,19 +48,26 @@ manproto() {
 
 ccreate() {
 	filename=$1
-	c=$2
-	h=$3
+	h=$2
+	c=$3
 	def_name=$(echo "$filename" | tr '[:lower:]' '[:upper:]')_H
 	
-	touch "$filename.$h" "$filename.$c"
+	touch "$filename.$h" 
 
 	echo "#ifndef $def_name" > "$filename.$h"
 	echo "# define $def_name" >> "$filename.$h"
 	echo "" >> "$filename.$h"
 	echo "#endif" >> "$filename.$h"
 
-	echo "#include \"$filename.$h\"" > "$filename.$c"
-    echo "Files(.$h, .$c) were created successfully"
+	echo -n "Do you want to create the source file $filename.$c? (y/n) [y]:"
+	read -r create_source
+    create_source=${create_source:-y}
+	if [[ "$create_source" =~ ^[yY]$ ]]; then
+		echo "#include \"$filename.$h\"" > "$filename.$c"
+		echo "Files(.$h, .$c) were created successfully"
+	else
+		echo "File(.$h) was successfully created"
+	fi
 }
 
 #? create an .hpp file with is assosiated .cpp
@@ -69,7 +76,7 @@ hppcreate() {
         echo "Error: No filename provided."
         exit 1
 	fi
-	ccreate "$1" cpp hpp
+	ccreate "$1" hpp cpp
 }
 
 #? create an .h file with is assosiated .c
@@ -78,7 +85,7 @@ hcreate() {
         echo "Error: No filename provided."
         exit 1
 	fi
-	ccreate "$1" c h
+	ccreate "$1" h c
 }
 
 #? init current directory to be a project directory
