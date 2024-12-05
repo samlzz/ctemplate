@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo -n "Which shell do you use? (bash/zsh/fish/other) [bash]:"
+echo -n "Which shell do you use? (bash/zsh/fish/other):"
 read -r shell
 
 case "$shell" in
@@ -29,5 +29,4 @@ if [ ! -f "$config_file" ]; then
 fi
 
 cat ./utils.sh >> "$config_file"
-echo "Successfully configured 'utils.sh' functions'"
-source "$config_file"
+echo "Successfully configured 'utils.sh' functions, don't forget to open new shell to perform the changes"
