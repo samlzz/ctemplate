@@ -28,5 +28,12 @@ if [ ! -f "$config_file" ]; then
     exit 1
 fi
 
-cat ./utils.sh >> "$config_file"
+utils="$HOME/ctemplate/utils.sh"
+chmod +x "$utils"
+
+if [ ! -f "$utils" ]; then
+	echo "Utils file not found, please clone repo in ~/ctemplate"
+	exit 1
+fi
+echo "source $utils" >> "$config_file"
 echo "Successfully configured 'utils.sh' functions, don't forget to open new shell to perform the changes"
