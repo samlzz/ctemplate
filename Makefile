@@ -37,7 +37,8 @@ ifdef INCL_DIR
 endif
 
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
-OBJS =	$(addprefix $(OBJ_DIR), $(notdir $(SRCS:.c=.o)))
+OBJS := $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
+O_DIRS := $(sort $(dir $(OBJS)))
 
 #? cmd for make final file
 ifeq ($(suffix $(NAME)), .a)
@@ -48,7 +49,7 @@ endif
 
 #* Rules
 
-all:	$(NAME)
+all:	$(O_DIRS) $(NAME)
 
 $(NAME): $(OBJ_DIR) $(OBJS)
 	@printf "$(GRAY)"
@@ -61,6 +62,9 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 
 $(OBJ_DIR):
 	@$(MD) $(OBJ_DIR)
+
+$(O_DIRS):
+	@$(MD) $@
 
 clean:
 	@$(RM) $(OBJS)

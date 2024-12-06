@@ -39,8 +39,9 @@ ifdef INCL_DIR
 	CFLAGS += -I$(INCL_DIR)
 endif
 
-SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
-OBJS =	$(addprefix $(OBJ_DIR), $(notdir $(SRCS:.c=.o)))
+SRCS := $(addprefix $(SRC_DIR), $(C_FILES))
+OBJS := $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
+O_DIRS := $(sort $(dir $(OBJS)))
 
 #? cmd for make final file
 ifeq ($(suffix $(NAME)), .a)
@@ -53,7 +54,7 @@ endif
 
 #* Rules
 
-all:	lib $(NAME)
+all:	lib $(O_DIRS) $(NAME)
 
 lib: $(LIBFT)
 	@printf "$(GRAY)"
@@ -88,6 +89,9 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 
 $(OBJ_DIR):
 	@$(MD) $(OBJ_DIR)
+
+$(O_DIRS):
+	@$(MD) $@
 
 clean:
 	@$(RM) $(OBJS)
