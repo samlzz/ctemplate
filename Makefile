@@ -49,9 +49,9 @@ endif
 
 #* Rules
 
-all:	$(O_DIRS) $(NAME)
+all:	$(NAME)
 
-$(NAME): $(OBJ_DIR) $(OBJS)
+$(NAME): $(O_DIRS) $(OBJS)
 	@printf "$(GRAY)"
 	$(LINK_CMD)
 	$(call COLOR_PRINT,$(GREEN)$(UNDERLINE),$(NAME) compiled !)
@@ -59,9 +59,6 @@ $(NAME): $(OBJ_DIR) $(OBJS)
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(call COLOR_PRINT,$(YELLOW),Compiling: $<)
 	@$(CC) $(CFLAGS) -c $< -o $@
-
-$(OBJ_DIR):
-	@$(MD) $(OBJ_DIR)
 
 $(O_DIRS):
 	@$(MD) $@
