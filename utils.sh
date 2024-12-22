@@ -59,7 +59,7 @@ ccreate() {
 	echo "" >> "$filename.$h"
 	echo "#endif" >> "$filename.$h"
 
-	echo -n "Do you want to create the source file $filename.$c? (y/n) [y]:"
+	echo -n "Do you want to create the source file $filename.$c? (Y/n):"
 	read -r create_source
     create_source=${create_source:-y}
 	if [[ "$create_source" =~ ^[yY]$ ]]; then
@@ -95,13 +95,13 @@ ftinit() {
 
 	#? tmp_dir doesn't exist ? reitriving from github
 	if [ ! -d "$tmp_dir" ]; then
-		echo -n "'ctemplate' folder not found in home directory, retrieving it from github (y/n) [y]:"
+		echo -n "'ctemplate' folder not found in home directory, retrieving it from github (Y/n):"
 		read -r retriev
 		retriev=${retriev:-y}
 		if [[ "$retriev" =~ ^[yY]$ ]]; then
 			git clone git@github.com:samlzz/template.git "$tmp_dir" || {
-                echo "Error: Failed to clone repository."
-                exit 1
+				echo "Error: Failed to clone repository."
+				exit 1
             }
 		else
 			exit 1
@@ -110,16 +110,17 @@ ftinit() {
 
 	cp "$tmp_dir/.gitignore" "$curr_dir"
 
-    if [[ "$1" =~ ^(--noMake|--nomake|-nm)$ ]]; then
-        return
-    fi
+	if [[ "$1" =~ ^(--noMake|--nomake|-nm)$ ]]; then
+		return
+	fi
 
-	echo -n "Did your project will use libft ? (y/n) [y]: "
-	read -r include_libft		
+	echo -n "Did your project will use libft ? (Y/n): "
+	read -r include_libft
 	include_libft=${include_libft:-y}
 	if [[ "$include_libft" =~ ^[yY]$ ]]; then
 		cp "$tmp_dir/libftMakefile" "$curr_dir/Makefile"
 	else
 		cp "$tmp_dir/Makefile" "$curr_dir/Makefile"
 	fi
+	mkdir src
 }
