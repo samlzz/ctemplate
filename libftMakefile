@@ -99,6 +99,7 @@ clean:
 
 fclean:		clean
 	@$(RM) $(NAME)
+	@$(RM) $(LIBFT)/libft.a
 	$(call COLOR_PRINT,$(CYAN),executables files cleaned!)
 
 re:		fclean all
