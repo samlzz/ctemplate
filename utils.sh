@@ -119,6 +119,9 @@ ftinit() {
 	include_libft=${include_libft:-y}
 	if [[ "$include_libft" =~ ^[yY]$ ]]; then
 		cp "$tmp_dir/libftMakefile" "$curr_dir/Makefile"
+		make lib
+		make fclean
+		./libft/features.sh
 	else
 		cp "$tmp_dir/Makefile" "$curr_dir/Makefile"
 	fi
