@@ -46,10 +46,10 @@ O_DIRS := $(sort $(dir $(OBJS)))
 #? cmd for make final file
 ifeq ($(suffix $(NAME)), .a)
 	LINK_CMD = $(AR) $(NAME) $(OBJS) $(addprefix $(LIBFT)/, $(shell cat $(LIBFT)/libft_obj.txt))
-	LIBFT_RULE = $(MAKE) bobjects
+	LIBFT_RULE = $(MAKE) objects
 else
 	LINK_CMD = $(CC) $(CFLAGS) $(OBJS) $(LIBFT)/libft.a -o $(NAME)
-	LIBFT_RULE = $(MAKE) bonus
+	LIBFT_RULE = $(MAKE)
 endif
 
 #* Rules
