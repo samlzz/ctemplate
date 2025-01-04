@@ -65,7 +65,7 @@ $(LIBFT):
 	@$(RM) -r ./$(LIBFT)/.git
 	@$(RM) ./$(LIBFT)/.gitignore
 
-relib: dellib all
+relib: dellib $(LIBFT)
 
 dellib:
 	$(call COLOR_PRINT,$(MAGENTA),$(LIBFT) cleaned !)
