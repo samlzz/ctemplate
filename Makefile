@@ -33,7 +33,7 @@ COLOR_PRINT = @printf "$(1)$(2)$(DEF_COLOR)\n"
 #* Automatic
 
 ifdef INCL_DIR
-	CFLAGS += -I$(INCL_DIR)
+	CFLAGS +=$(addprefix -I, $(INCL_DIR))
 endif
 
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
