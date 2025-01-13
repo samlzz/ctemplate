@@ -4,10 +4,13 @@ NAME = ...
 #TODO: Folders name must end with '\'
 SRC_DIR = src/
 OBJ_DIR = build/
+
 INCL_DIR = 
+LIB_DIRS =
+LIB_FILES =
 
 CC = cc
-CFLAGS := -Wall -Wextra -Werror
+CFLAGS := -Wall -Wextra -Werror -MMD
 RM = rm -f
 MD = mkdir -p
 AR = ar rcs
@@ -32,19 +35,19 @@ COLOR_PRINT = @printf "$(1)$(2)$(DEF_COLOR)\n"
 
 #* Automatic
 
-ifdef INCL_DIR
-	CFLAGS +=$(addprefix -I, $(INCL_DIR))
-endif
+INCL_FLAGS = $(addprefix -I, $(INCL_DIR))
+LIB_FLAGS = $(addprefix -L, $(LIB_DIRS)) $(addprefix -l, $(LIB_FILES))
 
 SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
 OBJS := $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
+DEPS = $(OBJS:.o=.d)
 O_DIRS := $(sort $(dir $(OBJS)))
 
 #? cmd for make final file
 ifeq ($(suffix $(NAME)), .a)
-	LINK_CMD = $(AR) $(NAME) $(OBJS)
+	LINK_CMD = $(AR) $(NAME) $(OBJS) $(LIB_FLAGS)
 else
-	LINK_CMD = $(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+	LINK_CMD = $(CC) $(OBJS) -o $(NAME) $(CFLAGS) $(LIB_FLAGS)
 endif
 
 #* Rules
@@ -58,7 +61,9 @@ $(NAME): $(O_DIRS) $(OBJS)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(call COLOR_PRINT,$(YELLOW),Compiling: $<)
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) -c $< -o $@ $(CFLAGS) $(INCL_FLAGS)
+
+-include $(DEPS)
 
 $(O_DIRS):
 	@$(MD) $@
