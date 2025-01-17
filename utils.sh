@@ -4,6 +4,7 @@ alias cl="clear"
 alias la="ls --all"
 alias vl="valgrind"
 alias ccw="gcc -Wall -Wextra -Werror"
+alias mk="make"
 
 #* Functions
 
