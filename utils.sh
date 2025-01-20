@@ -128,3 +128,52 @@ ftinit() {
 	fi
 	mkdir src
 }
+
+gupdate()
+{
+	default_repos=("$HOME/ctemplate")
+	if [ "$#" -eq 0 ]; then
+		echo "[INFO] no dir given, use default directory."
+		repos_to_update=("${default_repos[@]}")
+	else
+		repos_to_update=("${default_repos[@]}" "$@")
+	fi
+	updated_repos=()
+
+	for repo_path in "${repos_to_update[@]}"; do
+		if [ ! -d "$repo_path" ]; then
+		    echo "[ERREUR] '$repo_path' doesn't exist."
+		    continue
+		fi
+
+		cd "$repo_path" || {
+		    echo "[ERREUR] fail to navige to $repo_path."
+		    continue
+		}
+
+		if [ ! -d ".git" ]; then
+		    echo "[ERREUR] $repo_path wasn't a Git repository."
+		    cd - > /dev/null
+		    continue
+		fi
+
+		echo "[INFO] Mise à jour du dépôt dans $repo_path..."
+		pull_output=$(git pull 2>&1)
+
+		if [[ "$pull_output" != *"Already up to date."* ]]; then
+		    updated_repos+=("$repo_path")
+		fi
+
+		cd  > /dev/null
+	done
+
+	# Affiche les résultats
+	echo "\n[RÉSUMÉ] Dossiers mis à jour :"
+	if [ ${#updated_repos[@]} -eq 0 ]; then
+		echo "Aucun dépôt n'a été mis à jour."
+	else
+		for updated_repo in "${updated_repos[@]}"; do
+	    		echo "- $updated_repo"
+		done
+	fi
+}
