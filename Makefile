@@ -9,7 +9,7 @@ INCL_DIR =
 LIB_DIRS =
 LIB_FILES =
 
-CC = cc
+CC = gcc
 CFLAGS := -Wall -Wextra -Werror -MMD
 RM = rm -f
 MD = mkdir -p

@@ -10,7 +10,7 @@ INCL_DIR = $(LIBFT)
 LIB_DIRS = $(LIBFT)
 LIB_FILES = ft
 
-CC = cc
+CC = gcc
 CFLAGS := -Wall -Wextra -Werror -MMD
 RM = rm -f
 MD = mkdir -p
