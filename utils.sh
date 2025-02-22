@@ -7,6 +7,7 @@ alias vla="valgrind -s --leak-check=full --track-origins=yes --show-leak-kinds=a
 
 alias ccw="gcc -Wall -Wextra -Werror"
 alias mk="make"
+alias py="python3"
 
 #* Functions
 
