@@ -180,3 +180,27 @@ gupdate()
 		done
 	fi
 }
+
+manage_dns() {
+    if [[ "$1" == "off" ]]; then
+        echo "[INFO] Désactivation de la gestion DNS par NetworkManager..."
+        sudo mkdir -p /etc/NetworkManager/conf.d
+        echo -e "[main]\ndns=none" | sudo tee /etc/NetworkManager/conf.d/dns.conf > /dev/null
+        cat /etc/myresolv.conf | sudo tee /etc/resolv.conf > /dev/null
+        sudo chattr +i /etc/resolv.conf
+        sudo systemctl restart NetworkManager
+        echo "[OK] Gestion DNS désactivée. Utilisation de Cloudflare et Google."
+
+    elif [[ "$1" == "on" ]]; then
+        echo "[INFO] Réactivation de la gestion DNS par NetworkManager..."
+        sudo rm -f /etc/NetworkManager/conf.d/dns.conf
+        sudo chattr -i /etc/resolv.conf
+        sudo systemctl restart NetworkManager
+        echo "[OK] Gestion DNS réactivée par NetworkManager."
+
+    else
+        echo "Usage: manage_dns on|off"
+        return 1
+    fi
+}
+
