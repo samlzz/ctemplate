@@ -3,7 +3,7 @@
 alias cl="clear"
 alias la="ls --all"
 alias vl="valgrind"
-alias vla="valgrind -s --leak-check=full --track-origins=yes --show-leak-kinds=all --track-fds=yes"
+alias vla="valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all --track-fds=yes"
 
 alias ccw="gcc -Wall -Wextra -Werror"
 alias mk="make"
