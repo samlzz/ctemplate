@@ -29,11 +29,14 @@ if [ ! -f "$config_file" ]; then
 fi
 
 utils="$HOME/ctemplate/utils.sh"
+gitalias="$HOME/ctemplate/git_alias.sh"
 chmod +x "$utils"
+chmod +x "$gitalias"
 
 if [ ! -f "$utils" ]; then
 	echo "Utils file not found, please clone repo in ~/ctemplate"
 	exit 1
 fi
 echo "source $utils" >> "$config_file"
+echo "source $gitalias" >> "$config_file"
 echo "Successfully configured 'utils.sh' functions, don't forget to open new shell to perform the changes"
