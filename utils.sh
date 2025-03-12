@@ -134,16 +134,21 @@ ftinit() {
 
 gupdate()
 {
+	curr_dir=$(pwd)
 	default_repos=("$HOME/ctemplate")
 	if [ "$#" -eq 0 ]; then
 		echo "[INFO] no dir given, use default directory."
 		repos_to_update=("${default_repos[@]}")
 	else
-		repos_to_update=("${default_repos[@]}" "$@")
+		repos_to_update=("$@" "${default_repos[@]}")
 	fi
 	updated_repos=()
 
 	for repo_path in "${repos_to_update[@]}"; do
+		if [[ "$repo_path" != /* ]]; then
+		    repo_path="$curr_dir/$repo_path"
+		fi
+
 		if [ ! -d "$repo_path" ]; then
 		    echo "[ERREUR] '$repo_path' doesn't exist."
 		    continue
@@ -156,22 +161,22 @@ gupdate()
 
 		if [ ! -d ".git" ]; then
 		    echo "[ERREUR] $repo_path wasn't a Git repository."
-		    cd - > /dev/null
 		    continue
 		fi
 
 		echo "[INFO] Mise à jour du dépôt dans $repo_path..."
+		git fetch --all
 		pull_output=$(git pull 2>&1)
 
-		if [[ "$pull_output" != *"Already up to date."* ]]; then
+		if [ $? -eq 0 ] && [[ "$pull_output" != *"Already up to date."* ]]; then
 		    updated_repos+=("$repo_path")
 		fi
-
-		cd  > /dev/null
 	done
 
+	cd "$curr_dir" > /dev/null
+	
 	# Affiche les résultats
-	echo "\n[RÉSUMÉ] Dossiers mis à jour :"
+	echo -e "\n[RÉSUMÉ] Dossiers mis à jour :"
 	if [ ${#updated_repos[@]} -eq 0 ]; then
 		echo "Aucun dépôt n'a été mis à jour."
 	else
