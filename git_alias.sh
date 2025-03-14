@@ -11,7 +11,7 @@ alias gp="git push"
 git config --global alias.pushall '!git push origin main && git push vogsphere main'
 git config --global alias.showall '!git remote show vogsphere && echo "___________________________________________" && echo "" && git remote show origin'
 
-conv_commit() {
+convc() {
     glow <<EOF
 
 # 📌 Conventional Commit Messages
