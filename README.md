@@ -59,6 +59,7 @@ chmod +x init.sh
 -   `hppcreate <name>`: Creates a `.hpp` source file with an associated `.cpp` file.
 -   `ftinit [--noMake|-nm]`: Initializes a C project directory, optionally have a Makefile, and if it is, ask if it should include `libft`.
 -   `gupdate`: Updates multiple Git repositories.
+-   `convc`: Show how we should write a conventional commit.
 
 #### For Arch linux
 
