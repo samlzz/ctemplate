@@ -7,6 +7,7 @@ alias gaa="git add ."
 alias gcm="git commit -m"
 alias gca="git commit --amend"
 alias gp="git push"
+alias gifiles="git ls-files --others --ignored --exclude-standard"
 
 git config --global alias.pushall '!git push origin main && git push vogsphere main'
 git config --global alias.showall '!git remote show vogsphere && echo "___________________________________________" && echo "" && git remote show origin'
