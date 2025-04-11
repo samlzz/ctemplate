@@ -58,7 +58,6 @@ all:	lib $(NAME)
 lib: $(LIBFT)
 	@printf "$(GRAY)"
 	@$(MAKE) -C $(LIBFT)
-	$(call COLOR_PRINT,$(GREEN),$(LIBFT)compiled !)
 
 $(LIBFT):
 	$(call COLOR_PRINT,$(MAGENTA),Retrieving libft sources...)
