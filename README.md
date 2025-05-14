@@ -1,29 +1,42 @@
 # Configuration Repository
 
-This repository contains various configuration files and scripts to streamline development and system setup. It includes shell configurations, utility scripts, Makefile templates, and settings for terminal tools like Alacritty and Tmux.
+This repository contains various configuration files and scripts to streamline development and system setup. It includes shell configurations, utility scripts, Makefile templates, and settings of my IDE and some terminal tools.
 
 ## Contents
 
 ### 1. **Makefile Templates**
+
+-   `newMakefile`: Makefile cross languages (C, C++)
+
+#### Old template, kept for compatibility:
 
 -   `Makefile`: General-purpose Makefile for C projects not using my `libft`.
 -   `libftMakefile`: Specialized Makefile for projects integrating my `libft`.
 
 ### 2. **Shell Scripts**
 
--   `utils.sh`: A collection of shell utilities and aliases.
--   `git_alias.sh`: Defines useful Git aliases for efficiency.
--   `init.sh`: Script to initialize shell configurations with `utils.sh` and Git aliases.
+-   `utils.sh`: Core utility script with many helper functions and aliases.
+-   `git_alias.sh`: Git aliases and global Git configuration shortcuts.
+-   `init.sh`: Script to bootstrap your shell with aliases and helper functions.
+-   `gitingest.sh`: Smart utility to show file structure or content recap
 
 ### 3. **Project Utilities**
 
 -   `vl_msg.md`: Detailed explanations of Valgrind message types and severity.
 
-### 4. **Configuration Files**
+### 4. **Settings**
+
+#### **Terminal Configurations**
 
 -   `config/alacritty.toml`: Alacritty terminal configuration.
 -   `config/catppuccin-mocha.toml`: Color scheme settings for Alacritty.
 -   `config/tmux.conf`: Tmux configuration for enhanced workflow and Neovim integration.
+
+#### **Editor Configuration**
+
+-   `vscode/settings.json`: Predefined VSCode preferences.
+-   `vscode/snippets/`: Custom code snippets (e.g. C++ class template).
+-   `vscode/reinst_ext.sh`: Script to reinstall saved VSCode extensions.
 
 ## How to Use
 
@@ -35,49 +48,37 @@ Run the `init.sh` script to add aliases and functions to your shell configuratio
 ./init.sh
 ```
 
-If needed, set execute permissions:
-
-```bash
-chmod +x init.sh
-```
-
 ### **Available Aliases**
 
--   `cl`: Clears the terminal.
--   `la`: Lists all files, including hidden ones.
--   `vl`: Runs `valgrind`.
--   `vl`: Runs `valgrind` with a set of default arguments.
--   `ccw`: Compiles C programs with strict warnings.
--   `py`: Runs `python3`.
+-   `cl`: Clears terminal
+-   `la`: `ls -a`
+-   `vl`: Short `valgrind`
+-   `vla`: Verbose `valgrind` config
+-   `ccw`: C compiler with strict flags
+-   `py`: Shortcut for `python3`
 -   Git Aliases: Includes `gs` (status), `gl` (log), `gcl` (clone), `ga` (add), `gp` (push), etc.
 
-### **Utility Functions**
+### **Shell Functions**
 
--   `exinit <dir>`: Initializes a directory with `.exemple` content.
--   `manproto <function>`: Extracts function prototypes from `man` pages.
--   `hcreate <name>`: Creates a `.h` source file with, optinaly, an associated `.c` file.
--   `hppcreate <name>`: Creates a `.hpp` source file with an associated `.cpp` file.
--   `ftinit [--noMake|-nm]`: Initializes a C project directory, optionally have a Makefile, and if it is, ask if it should include `libft`.
--   `gupdate`: Updates multiple Git repositories.
--   `convc`: Show how we should write a conventional commit.
+-   `ftinit`: Initializes a C/C++ project with `src/` folder and, optionnaly, a Makefile
+-   `srcs_fill [dir]`: Auto-fill FILES in Makefile from `<dir> | curent dir` files
+-   `exinit <dir>`: Clones a template `.exemple` folder into `<dir>`
+-   `manproto <fn>`: Extracts C function prototype from `man`
+-   `hcreate <name>`: Creates `.h` and optional `.c`
+-   `hppcreate <name>`: Creates `.hpp` and `.cpp`
+-   `gupdate [dir]`: Pull updates from multiple Git repos
+-   `convc`: Shows how to write conventional commits
+-   `managedns on|off|state`: DNS control for Arch-based systems
 
-#### For Arch linux
+## 🛠️ Makefile Commands (via `newMakefile`)
 
--   `managedns on|off|state`: Manages DNS settings for NetworkManager.
+-   `make` — Compile project
+-   `make clean` — Remove object files
+-   `make fclean` — Remove binary and object files
+-   `make re` — Clean and rebuild
+-   `make run` — Run compiled binary
 
-### **Makefile Commands**
-
--   `make`: Compiles the project.
--   `make clean`: Removes object files.
--   `make fclean`: Removes executables and object files.
--   `make re`: Cleans and recompiles everything.
--   `make run`: Executes the compiled program.
-
-_in project with libft_
-
--   `make lib`: Retrieve and compiles the `libft` library.
--   `make dellib`: Delete the `libft` folder.
--   `make relib`: Delete, retrieve and recompiles `libft`.
+If using libft, use the old `libftMakefile` or clone it manually, then treat it like a classic librairie (see LIB_DIRS & LIB_FILES).
 
 ## Terminal Configurations
 
