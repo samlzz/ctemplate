@@ -117,18 +117,35 @@ ftinit() {
 		return
 	fi
 
-	echo -n "Did your project will use libft ? (Y/n): "
-	read -r include_libft
-	include_libft=${include_libft:-y}
-	if [[ "$include_libft" =~ ^[yY]$ ]]; then
-		cp "$tmp_dir/libftMakefile" "$curr_dir/Makefile"
-		make lib
-		make fclean
-		./libft/features.sh
-	else
-		cp "$tmp_dir/Makefile" "$curr_dir/Makefile"
-	fi
+	cp "$tmp_dir/newMakefile" "$curr_dir/Makefile"
 	mkdir src
+}
+
+srcs_fill() {
+	local search_dir="${1:-.}"
+
+	if [ ! -f "Makefile" ]; then
+		echo "Makefile not found in current directory."
+		return 1
+	fi
+
+	local file_list
+	file_list=$(find "$search_dir" -type f \( -name "*.c" -o -name "*.cpp" \) |
+		sed 's|.*/||' |
+		sort |
+		tr '\n' ' ')
+
+	if [ -z "$file_list" ]; then
+		echo "No files found in '$search_dir'"
+		return 0
+	fi
+
+	sed -i.bak -E "/### UFILES_START ###/,/### END ###/c\\
+### UFILES_START ###\nFILES     ?= $file_list\n### END ###
+" "Makefile"
+
+	echo "[OK] 'FILES' updated with :"
+	echo "$file_list"
 }
 
 gupdate() {
