@@ -1,6 +1,6 @@
 alias gs="git status"
-alias gl="git log | bat"
-alias gd="git diff | bat"
+alias gl="git log"
+alias gd="git diff"
 alias gcl="git clone"
 alias ga="git add"
 alias gaa="git add ."
@@ -13,8 +13,8 @@ git config --global alias.pushall '!git push origin main && git push vogsphere m
 git config --global alias.showall '!git remote show vogsphere && echo "___________________________________________" && echo "" && git remote show origin'
 
 convc() {
-	
-	read -r -d  '' conv_doc <<EOF
+
+	read -r -d '' conv_doc <<EOF
 # 📌 Conventional Commit Messages
 
 Les commits conventionnels permettent de structurer les messages de commit de manière standardisée pour faciliter la compréhension, l'automatisation et la génération de changelogs.
@@ -48,12 +48,11 @@ Exemple : \`feat!: supprime l'ancienne API\`
 - \`refactor(db): optimise les requêtes SQL\`
 - \`docs: améliore la documentation de l'API\`
 EOF
-	if command -v glow &>/dev/null;  then
-		glow <<< $conv_doc
+	if command -v glow &>/dev/null; then
+		glow <<<$conv_doc
 	elif command -v bat &>/dev/null; then
-		bat -l md -p <<< $conv_doc
+		bat -l md -p <<<$conv_doc
 	else
-		cat <<< $conv_doc
+		cat <<<$conv_doc
 	fi
 }
-
