@@ -73,15 +73,6 @@ ccreate() {
 	fi
 }
 
-#? create an .hpp file with is assosiated .cpp
-hppcreate() {
-	if [ -z "$1" ]; then
-		echo "Error: No filename provided."
-		exit 1
-	fi
-	ccreate "$1" hpp cpp
-}
-
 #? create an .h file with is assosiated .c
 hcreate() {
 	if [ -z "$1" ]; then
@@ -89,6 +80,71 @@ hcreate() {
 		exit 1
 	fi
 	ccreate "$1" h c
+}
+
+hppcreate() {
+	if [ -z "$1" ]; then
+		echo "Usage: hppcreate <ClassName>"
+		return 1
+	fi
+
+	local class_name="$1"
+	local hpp_file="${class_name}.hpp"
+	local cpp_file="${class_name}.cpp"
+	local include_guard
+	include_guard=$(echo "${class_name}_HPP" | tr '[:lower:]' '[:upper:]')
+
+	if [[ -e "$hpp_file" || -e "$cpp_file" ]]; then
+		echo "[ERROR] $hpp_file or $cpp_file already exists."
+		return 1
+	fi
+
+	# Create .hpp
+	cat >"$hpp_file" <<EOF
+#ifndef ${include_guard}
+# define ${include_guard}
+
+# include <iostream>
+
+class ${class_name} {
+public:
+	${class_name}();
+	${class_name}(const ${class_name}& other);
+	${class_name}& operator=(const ${class_name}& other);
+	~${class_name}();
+
+private:
+	// Attributes
+};
+
+#endif
+EOF
+
+	# Create .cpp
+	cat >"$cpp_file" <<EOF
+#include "${hpp_file}"
+
+${class_name}::${class_name}() {
+	std::cout << "${class_name} default constructor called" << std::endl;
+}
+
+${class_name}::${class_name}(const ${class_name}& other) {
+	std::cout << "${class_name} copy constructor called" << std::endl;
+	*this = other;
+}
+
+${class_name}& ${class_name}::operator=(const ${class_name}& other) {
+	std::cout << "${class_name} assignment operator called" << std::endl;
+	if (this != &other) {
+		// Copy attributes here
+	}
+	return *this;
+}
+
+${class_name}::~${class_name}() {
+	std::cout << "${class_name} destructor called" << std::endl;
+}
+EOF
 }
 
 #? init current directory to be a project directory
