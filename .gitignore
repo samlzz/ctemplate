@@ -1,10 +1,7 @@
 **/**.swp
 .vscode/*
 
-**/main.c
 **/ign_*
-
-libft*
 
 build/*
 *.d
@@ -12,3 +9,4 @@ build/*
 *.map
 *.a
 *.out
+*.bak
