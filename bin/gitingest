@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+if ! command -v fd >/dev/null; then
+	printf "Error: 'fd' command not found, but required.\n" >&2
+	return 1
+fi
+
 declare -a INCLUDE_PATTERNS=()
 declare -a EXCLUDE_PATTERNS=()
 BASE_DIR=""
@@ -64,36 +69,6 @@ parse_args() {
 	BASE_DIR="${BASE_DIR%/}"
 }
 
-convert_glob_to_regex() {
-	local pattern="$1"
-	pattern="${pattern//./\\.}"
-	pattern="${pattern//\*/.*}"
-	pattern="${pattern//\?/.}"
-	printf "%s" "$pattern"
-}
-
-sanitize_patterns() {
-	local i
-	for i in "${!INCLUDE_PATTERNS[@]}"; do
-		local raw="${INCLUDE_PATTERNS[$i]}"
-		raw="${raw//[[:space:]]/}"
-		if [[ "$raw" != *['^$.*+?()[]'*'']* ]]; then
-			INCLUDE_PATTERNS[$i]=$(convert_glob_to_regex "$raw")
-		else
-			INCLUDE_PATTERNS[$i]="$raw"
-		fi
-	done
-	for i in "${!EXCLUDE_PATTERNS[@]}"; do
-		local raw="${EXCLUDE_PATTERNS[$i]}"
-		raw="${raw//[[:space:]]/}"
-		if [[ "$raw" != *['^$.*+?()[]'*'']* ]]; then
-			EXCLUDE_PATTERNS[$i]=$(convert_glob_to_regex "$raw")
-		else
-			EXCLUDE_PATTERNS[$i]="$raw"
-		fi
-	done
-}
-
 validate_directory() {
 	if [[ ! -d "$BASE_DIR" ]]; then
 		printf "Error: Directory does not exist: %s\n" "$BASE_DIR" >&2
@@ -101,29 +76,35 @@ validate_directory() {
 	fi
 }
 
-matches_include() {
-	local filename="$1"
-	if [[ ${#INCLUDE_PATTERNS[@]} -eq 0 ]]; then
-		return 0
-	fi
-	local pattern
-	for pattern in "${INCLUDE_PATTERNS[@]}"; do
-		if [[ "$filename" =~ $pattern ]]; then
-			return 0
-		fi
-	done
-	return 1
-}
+get_file_list() {
+	local cmd
+	cmd=(fd --type f --follow --base-directory "$BASE_DIR")
 
-matches_exclude() {
-	local filename="$1"
-	local pattern
-	for pattern in "${EXCLUDE_PATTERNS[@]}"; do
-		if [[ "$filename" =~ $pattern ]]; then
-			return 0
-		fi
-	done
-	return 1
+	if [[ ${#INCLUDE_PATTERNS[@]} -gt 0 && ${#EXCLUDE_PATTERNS[@]} -gt 0 ]]; then
+		printf "Error: Cannot use both include and exclude options simultaneously.\n" >&2
+		return 1
+	fi
+
+	if [[ ${#INCLUDE_PATTERNS[@]} -gt 0 ]]; then
+		cmd+=(--exact-depth 1)
+		for inc in "${INCLUDE_PATTERNS[@]}"; do
+			cmd+=("--search-path" "$BASE_DIR/$inc")
+		done
+	fi
+
+	if [[ ${#EXCLUDE_PATTERNS[@]} -gt 0 ]]; then
+		for exc in "${EXCLUDE_PATTERNS[@]}"; do
+			cmd+=("--exclude" "$exc")
+		done
+	fi
+
+	local file_list
+	if ! file_list=$("${cmd[@]}"); then
+		printf "Error: Failed to retrieve file list with fd.\n" >&2
+		return 1
+	fi
+
+	printf "%s\n" "$file_list"
 }
 
 print_directory_structure() {
@@ -139,8 +120,7 @@ print_directory_structure() {
 
 print_file_contents() {
 	local file_list
-	if ! file_list=$(find "$BASE_DIR" -type f); then
-		printf "Error: Failed to find files in %s\n" "$BASE_DIR" >&2
+	if ! file_list=$(get_file_list); then
 		return 1
 	fi
 
@@ -148,33 +128,16 @@ print_file_contents() {
 
 	local file
 	while IFS= read -r file; do
-		local is_hidden="0"
-		[[ "$file" =~ (^|/)\.[^/]+ ]] && is_hidden="1"
-		local filename
-		filename=$(basename "$file")
-
-		local allow_hidden="0"
-		for pattern in "${INCLUDE_PATTERNS[@]}"; do
-			[[ "$pattern" == .* ]] && allow_hidden="1" && break
-		done
-
-		if [[ "$is_hidden" -eq 1 && "$allow_hidden" -eq 0 ]]; then
-			continue
-		fi
-
-		if ! matches_include "$filename"; then
-			continue
-		fi
-		if matches_exclude "$filename"; then
+		local full_path="$BASE_DIR/$file"
+		if [[ ! -f "$full_path" ]]; then
 			continue
 		fi
 		printf '================================================\n'
-		printf 'FILE: %s\n' "$filename"
+		printf 'FILE: %s\n' "$file"
 		printf '================================================\n'
-		cat "$file" || {
-			printf "Error: Failed to read file: %s\n" "$file" >&2
-			continue
-		}
+		if ! cat "$full_path"; then
+			printf "Error: Failed to read file: %s\n" "$full_path" >&2
+		fi
 		printf "\n"
 	done <<<"$file_list"
 }
