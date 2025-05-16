@@ -2,10 +2,10 @@
 
 set_config_file() {
 	local shell config
-	echo -n "Which shell do you use? (bash/zsh/fish/other):"
+	echo -n "Which shell do you use? ([zsh]/bash/fish/other):"
 	read -r shell
 
-	case "$shell" in
+	case "${shell:-zsh}" in
 	bash)
 		config="$HOME/.bashrc"
 		;;
