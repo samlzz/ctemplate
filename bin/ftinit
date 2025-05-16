@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# === File: ftinit ===
+
+set -euo pipefail
+
+init_project_dir() {
+	local template_dir="$HOME/ctemplate"
+	local curr_dir
+	curr_dir=$(pwd)
+	local skip_make=0
+
+	if [[ $# -gt 0 ]]; then
+		case "$1" in
+		--noMake | --nomake | -nm)
+			skip_make=1
+			;;
+		*)
+			printf "Usage: ftinit [--noMake|--nomake|-nm]\n" >&2
+			return 1
+			;;
+		esac
+	fi
+
+	if [[ ! -d "$template_dir" ]]; then
+		printf "'ctemplate' folder not found in \$HOME, retrieve from GitHub? (Y/n): "
+		read -r response
+		response=${response:-y}
+		if [[ "$response" =~ ^[yY]$ ]]; then
+			if ! git clone git@github.com:samlzz/template.git "$template_dir"; then
+				printf "Error: Failed to clone repository.\n" >&2
+				return 1
+			fi
+		else
+			printf "Aborted by user.\n" >&2
+			return 1
+		fi
+	fi
+
+	if ! cp "$template_dir/.gitignore" "$curr_dir/.gitignore"; then
+		printf "Error: Failed to copy .gitignore\n" >&2
+		return 1
+	fi
+
+	if [[ "$skip_make" -eq 0 ]]; then
+		if ! cp "$template_dir/Makefile" "$curr_dir/Makefile"; then
+			printf "Error: Failed to copy Makefile\n" >&2
+			return 1
+		fi
+		mkdir -p "$curr_dir/src"
+	fi
+}
+
+init_project_dir "$@"

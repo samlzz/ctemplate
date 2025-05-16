@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-set -o errexit
-set -o nounset
-set -o pipefail
+set -euo pipefail
 
 declare -a INCLUDE_PATTERNS=()
 declare -a EXCLUDE_PATTERNS=()
@@ -183,7 +181,6 @@ print_file_contents() {
 
 main() {
 	if ! parse_args "$@"; then return 1; fi
-	sanitize_patterns
 	if ! validate_directory; then return 1; fi
 
 	if [[ "$ONLY_MODE" == "archi" ]]; then
