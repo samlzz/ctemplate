@@ -46,6 +46,10 @@ ensure_local_bin_in_path() {
 	fi
 }
 
+add_once() {
+	grep -Fq "$1" "$CONFIG_FILE" || printf "%s\n" "$1" >>"$CONFIG_FILE"
+}
+
 add_source_once() {
 	local file="$1"
 	if [[ ! -f "$file" ]]; then
@@ -53,7 +57,7 @@ add_source_once() {
 		return 1
 	fi
 
-	grep -Fq "$file" "$CONFIG_FILE" || printf "\nsource \"%s\"\n" "$file" >>"$CONFIG_FILE"
+	add_once "source \"$file\""
 }
 
 main() {
@@ -75,11 +79,13 @@ main() {
 		return 1
 	}
 
+	add_once "# >>> ctemplate start >>>"
 	add_source_once "$utils"
 	add_source_once "$gitalias"
 	add_source_once "$completion"
 
 	ensure_local_bin_in_path
+	add_once "# <<< ctemplate end <<<"
 
 	cp "$template_dir"/bin/* "$HOME/.local/bin/" || {
 		echo "Error: fail to add commands to '~/.local/bin" >&2
