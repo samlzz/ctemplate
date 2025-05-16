@@ -1,26 +1,51 @@
-#* VARIABLES
-NAME = ...
+# =============================================================================
+#* >> USER CONFIGURATION (MANDATORY)
+# =============================================================================
 
-#TODO: Folders name must end with '\'
-SRC_DIR = src/
-OBJ_DIR = build/
+NAME      ?= 
+ifeq ($(NAME),)
+    $(error NAME is empty: please define executable name)
+endif
 
-INCL_DIR = 
-LIB_DIRS =
+#? Directory (end with /)
+SRC_DIR   = src/
+OBJ_DIR   = build/
+BIN_DIR   =
+
+### UFILES_START ###
+FILES     ?= 
+### END ###
+ifeq ($(FILES),)
+    $(error FILES is empty: please define source files)
+endif
+
+# =============================================================================
+#* >> USER CONFIGURATION (OPTIONAL)
+# =============================================================================
+
+AR        = ar rcs
+
+CC        = cc
+CFLAGS    = -Wall -Wextra -Werror
+
+CXX       = c++
+CXXFLAGS  = -Wall -Wextra -Werror -std=c++98
+
+INCL_DIRS =
+#? Directories & Libraries to link against
+LIB_DIRS  =
 LIB_FILES =
 
-CC = gcc
-CFLAGS := -Wall -Wextra -Werror -MMD
 RM = rm -f
 MD = mkdir -p
-AR = ar rcs
 
-C_FILES =	...
-
-#* Colors
+# =============================================================================
+# >> COLORS
+# =============================================================================
 
 ESC = \033[
-DEF_COLOR = $(ESC)0;39m
+NC = $(ESC)0;39m
+
 GRAY = $(ESC)0;90m
 RED = $(ESC)0;91m
 GREEN = $(ESC)0;92m
@@ -30,57 +55,89 @@ MAGENTA = $(ESC)0;95m
 CYAN = $(ESC)0;96m
 UNDERLINE = $(ESC)4m
 
-COLOR_PRINT = @printf "$(1)$(2)$(DEF_COLOR)\n"
+define clr_print
+	@printf "$(1)$(2)$(NC)\n"
+endef
 
+# =============================================================================
+# >> AUTOMATIC VARIABLES
+# =============================================================================
+C_FILES   := $(filter %.c,   $(FILES))
+C_SRCS    := $(addprefix $(SRC_DIR), $(C_FILES))
+C_OBJS    := $(patsubst $(SRC_DIR)%.c,   $(OBJ_DIR)%.o, $(C_SRCS))
 
-#* Automatic
+CPP_FILES  := $(filter %.cpp, $(FILES))
+CPP_SRCS   := $(addprefix $(SRC_DIR), $(CPP_FILES))
+CPP_OBJS   := $(patsubst $(SRC_DIR)%.cpp, $(OBJ_DIR)%.o, $(CPP_SRCS))
+COMPILE.cpp = 
 
-INCL_FLAGS = $(addprefix -I, $(INCL_DIR))
-LIB_FLAGS = $(addprefix -L, $(LIB_DIRS)) $(addprefix -l, $(LIB_FILES))
+SRCS      := $(C_SRCS) $(CPP_SRCS)
+OBJS      := $(C_OBJS) $(CPP_OBJS)
+DEPS      = $(OBJS:.o=.d)
+O_DIRS     = $(sort $(dir $(OBJS)))
 
-SRCS = $(addprefix $(SRC_DIR), $(C_FILES))
-OBJS := $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
-DEPS = $(OBJS:.o=.d)
-O_DIRS := $(sort $(dir $(OBJS)))
+CPPFLAGS   = $(addprefix -I, $(INCL_DIRS))
+LDFLAGS    = $(addprefix -L, $(LIB_DIRS))
+LDLIBS     = $(addprefix -l, $(LIB_FILES))
 
-#? cmd for make final file
+#? Determin linker
 ifeq ($(suffix $(NAME)), .a)
-	LINK_CMD = $(AR) $(NAME) $(OBJS) $(LIB_FLAGS)
+	LD = $(AR)
+else ifneq ($(CPP_FILES),)
+	LD = $(CXX)
+else ifneq ($(C_FILES),)
+	LD = $(CC)
 else
-	LINK_CMD = $(CC) $(OBJS) -o $(NAME) $(CFLAGS) $(LIB_FLAGS)
+	$(error Can't determine which linker to use. Please set LD manually.)
 endif
 
-#* Rules
+OUT := $(if $(BIN_DIR),$(BIN_DIR),./)$(NAME)
 
-all:	$(NAME)
+export VERBOSE    := false
+export P := @
+ifeq ($(VERBOSE),true)
+	P :=
+endif
 
-$(NAME): $(O_DIRS) $(OBJS)
-	@printf "$(GRAY)"
-	$(LINK_CMD)
-	$(call COLOR_PRINT,$(GREEN)$(UNDERLINE),$(NAME) compiled !)
+# =============================================================================
+# >> RULES
+# =============================================================================
+
+.PHONY: all
+all: $(OUT)
+
+$(OUT): $(O_DIRS) $(OBJS)
+	$(P)printf "$(GRAY)"
+	$(LD) $(LDFLAGS) $(OBJS) -o $(OUT) $(LDLIBS)
+	$(call clr_print,$(GREEN)$(UNDERLINE),$(NAME) compiled !)
+
+$(O_DIRS):
+	$(P)$(MD) $@
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
-	$(call COLOR_PRINT,$(YELLOW),Compiling: $<)
-	@$(CC) -c $< -o $@ $(CFLAGS) $(INCL_FLAGS)
+	$(P)$(CC) $(CFLAGS) -MMD $(CPPFLAGS) -c $< -o $@
+	$(call clr_print, $(YELLOW),Compiling C: $<)
+
+$(OBJ_DIR)%.o: $(SRC_DIR)%.cpp
+	$(P)$(CXX) $(CXXFLAGS) -MMD $(CPPFLAGS) -c $< -o $@
+	$(call clr_print, $(YELLOW),Compiling C++: $<)
 
 -include $(DEPS)
 
-$(O_DIRS):
-	@$(MD) $@
-
+.PHONY: clean
 clean:
-	@$(RM) $(OBJS)
-	@$(RM) -r $(OBJ_DIR)
-	$(call COLOR_PRINT,$(BLUE),$(NAME) object files cleaned!)
+	$(P)$(RM) $(OBJS) $(DEPS)
+	$(P)$(RM) -r $(OBJ_DIR)
+	$(call clr_print,$(BLUE),$(NAME) object files cleaned!)
 
-fclean:		clean
-	@$(RM) $(NAME)
-	$(call COLOR_PRINT,$(CYAN),executables files cleaned!)
+.PHONY: fclean
+fclean: clean
+	$(P)$(RM) $(OUT)
+	$(call clr_print,$(CYAN),executables files cleaned!)
 
-re:		fclean all
-	$(call COLOR_PRINT,$(GREEN),Cleaned and rebuilt everything for $(NAME)!)
+.PHONY: re
+re: fclean all
 
-run:
-	./$(NAME) | cat -e
-
-.PHONY:		all clean fclean re run
+.PHONY: run
+run: $(OUT)
+	$(OUT)
