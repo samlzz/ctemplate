@@ -1,54 +1,66 @@
 # Configuration Repository
 
-This repository contains various configuration files and scripts to streamline development and system setup. It includes shell configurations, utility scripts, Makefile templates, and settings of my IDE and some terminal tools.
+This repository contains various configuration files and scripts to streamline development and system setup. It includes shell helpers, Makefile templates, terminal/IDE settings and custom command-line utilities.
 
-## Contents
+## 📦 Contents
 
 ### 1. **Makefile Templates**
 
--   `newMakefile`: Makefile cross languages (C, C++)
+-   `Makefile`: Generic multi-language Makefile (C/C++) with auto linker detection
 
 #### Old template, kept for compatibility:
 
--   `Makefile`: General-purpose Makefile for C projects not using my `libft`.
+-   `oldMakefile`: General-purpose Makefile for C projects not using my `libft`.
 -   `libftMakefile`: Specialized Makefile for projects integrating my `libft`.
 
-### 2. **Shell Scripts**
+### 2. **CLI Commands (`bin/`)**
 
--   `utils.sh`: Core utility script with many helper functions and aliases.
--   `git_alias.sh`: Git aliases and global Git configuration shortcuts.
--   `init.sh`: Script to bootstrap your shell with aliases and helper functions.
--   `gitingest.sh`: Smart utility to show file structure or content recap
+These are now standalone scripts accessible from anywhere after :
 
-### 3. **Project Utilities**
+-   `ftinit`: Initialize a project with `src/`, `.gitignore`, and an optional Makefile
+-   `hcreate`: Create `.h/.c` or `.hpp/.cpp` files with proper include guards or class template
+-   `gitingest`: Display file structure and/or content of given directory.
+-   `gupdate`: Pull updates for multiple Git repositories
+-   `managedns`: Toggle DNS control through NetworkManager (Arch Linux focused)
 
--   `vl_msg.md`: Detailed explanations of Valgrind message types and severity.
+The `custom_completion.sh` file is used to defined completions for theses commands.
 
-### 4. **Settings**
+### 3. **Shell Scripts**
 
-#### **Terminal Configurations**
+-   `init.sh`: Bootstraps your shell with aliases and function sourcing
+-   `utils.sh`: Remaining helper functions and aliases (mostly minor utilities)
+-   `git_alias.sh`: Git-specific aliases and conventional commit helper
+
+### 4. **Development Utilities**
+
+-   `vl_msg.md`: Guide for interpreting Valgrind diagnostics and memory errors
+
+### 5. **Terminal & Editor Configuration**
+
+#### **🖥️ Terminal**
 
 -   `config/alacritty.toml`: Alacritty terminal configuration.
 -   `config/catppuccin-mocha.toml`: Color scheme settings for Alacritty.
 -   `config/tmux.conf`: Tmux configuration for enhanced workflow and Neovim integration.
 
-#### **Editor Configuration**
+#### **📝 VSCode**
 
 -   `vscode/settings.json`: Predefined VSCode preferences.
--   `vscode/snippets/`: Custom code snippets (e.g. C++ class template).
 -   `vscode/reinst_ext.sh`: Script to reinstall saved VSCode extensions.
 
-## How to Use
+## ⚙️ Usage
 
 ### **Initialize Shell Configuration**
 
-Run the `init.sh` script to add aliases and functions to your shell configuration:
+Run the `init.sh` script to add aliases and functions to your shell:
 
 ```bash
 ./init.sh
 ```
 
-### **Available Aliases**
+### **🧠 Aliases & Functions (still in utils.sh)**
+
+#### Aliases
 
 -   `cl`: Clears terminal
 -   `la`: `ls -a`
@@ -58,19 +70,14 @@ Run the `init.sh` script to add aliases and functions to your shell configuratio
 -   `py`: Shortcut for `python3`
 -   Git Aliases: Includes `gs` (status), `gl` (log), `gcl` (clone), `ga` (add), `gp` (push), etc.
 
-### **Shell Functions**
+#### Shell Functions
 
--   `ftinit`: Initializes a C/C++ project with `src/` folder and, optionnaly, a Makefile
 -   `srcs_fill [dir]`: Auto-fill FILES in Makefile from `<dir> | curent dir` files
 -   `exinit <dir>`: Clones a template `.exemple` folder into `<dir>`
 -   `manproto <fn>`: Extracts C function prototype from `man`
--   `hcreate <name>`: Creates `.h` and optional `.c`
--   `hppcreate <name>`: Creates `.hpp` and `.cpp`
--   `gupdate [dir]`: Pull updates from multiple Git repos
 -   `convc`: Shows how to write conventional commits
--   `managedns on|off|state`: DNS control for Arch-based systems
 
-## 🛠️ Makefile Commands (via `newMakefile`)
+## 🛠️ Makefile Commands
 
 -   `make` — Compile project
 -   `make clean` — Remove object files
@@ -78,9 +85,14 @@ Run the `init.sh` script to add aliases and functions to your shell configuratio
 -   `make re` — Clean and rebuild
 -   `make run` — Run compiled binary
 
-If using libft, use the old `libftMakefile` or clone it manually, then treat it like a classic librairie (see LIB_DIRS & LIB_FILES).
+If using libft, clone it and configure:
 
-## Terminal Configurations
+```make
+LIB_DIRS  = libft
+LIB_FILES = ft
+```
+
+## **🖥️ Terminal Setup**
 
 -   **Alacritty**: Configured with `MesloLGSDZ NerdFont`, opacity settings, dynamic padding, and Catppuccin theme.
 -   **Tmux**: Includes window navigation shortcuts, status bar customization, and integration with Neovim.
