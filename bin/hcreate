@@ -99,7 +99,7 @@ EOF
 create_c_header() {
 	local fullpath="$1"
 
-	local dir, base
+	local dir base
 	dir=$(dirname "$fullpath")
 	base=$(basename "$fullpath")
 	local hfile="${fullpath}.h"
@@ -134,7 +134,7 @@ create_c_header() {
 	fi
 }
 
-hcreate() {
+main() {
 	local mode="cpp"
 	local path
 
@@ -160,16 +160,6 @@ hcreate() {
 		create_cpp_class "$path"
 	else
 		create_c_header "$path"
-	fi
-}
-
-main() {
-	if [[ "$1" == "hcreate" ]]; then
-		shift
-		hcreate "$@"
-	else
-		printf "Usage: %s hcreate [--c] <path>\n" "$0" >&2
-		return 1
 	fi
 }
 
