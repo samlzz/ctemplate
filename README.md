@@ -76,6 +76,7 @@ Run the `init.sh` script to add aliases and functions to your shell:
 -   `exinit <dir>`: Clones a template `.exemple` folder into `<dir>`
 -   `manproto <fn>`: Extracts C function prototype from `man`
 -   `convc`: Shows how to write conventional commits
+-   `wlf-copy/paste`: copy/paste a file to/from clipboard
 
 ## 🛠️ Makefile Commands
 

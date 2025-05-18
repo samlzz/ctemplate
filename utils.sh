@@ -75,3 +75,24 @@ srcs_fill() {
 	echo "'FILES' updated with :"
 	echo "$file_list"
 }
+
+wlf-copy() {
+	local file="$1"
+
+	if ! command -v wl-copy >/dev/null; then
+		echo "Error: wl-copy command not found."
+		return 1
+	fi
+	if [ ! -f "$file" ]; then
+		echo "Error: file '$file' not found."
+		return 1
+	fi
+
+	cat "$file" | wl-copy
+}
+
+wlf-paste() {
+	local file="$1"
+
+	wl-paste | cat >"$file"
+}
