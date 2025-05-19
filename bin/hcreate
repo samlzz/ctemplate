@@ -71,6 +71,7 @@ EOF
 	cat >"$cpp" <<EOF
 #include "${class}.hpp"
 
+//* Constructors
 ${class}::${class}() {
     std::cout << "${class} default constructor called" << std::endl;
 }
@@ -80,6 +81,7 @@ ${class}::${class}(const ${class}& other) {
     *this = other;
 }
 
+// operators
 ${class}& ${class}::operator=(const ${class}& other) {
     std::cout << "${class} assignment operator called" << std::endl;
     if (this != &other) {
@@ -87,6 +89,13 @@ ${class}& ${class}::operator=(const ${class}& other) {
     }
     return *this;
 }
+
+//* Methods
+
+// ...
+
+
+//* Destructor
 
 ${class}::~${class}() {
     std::cout << "${class} destructor called" << std::endl;
