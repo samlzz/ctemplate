@@ -79,22 +79,17 @@ srcs_fill() {
 }
 
 wlf-copy() {
-	local file="$1"
-
 	if ! command -v wl-copy >/dev/null; then
 		echo "Error: wl-copy command not found."
 		return 1
 	fi
-	if [ ! -f "$file" ]; then
-		echo "Error: file '$file' not found."
-		return 1
-	fi
-
-	cat "$file" | wl-copy
+	cat $@ | wl-copy
 }
 
 wlf-paste() {
-	local file="$1"
-
-	wl-paste | cat >"$file"
+	if ! command -v wl-paste >/dev/null; then
+		echo "Error: wl-paste command not found."
+		return 1
+	fi
+	wl-paste | cat >$1
 }
