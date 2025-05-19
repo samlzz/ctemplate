@@ -60,6 +60,25 @@ add_source_once() {
 	add_once "source \"$file\""
 }
 
+add_custom_completion() {
+	local file="$1"
+	local fname
+	fname=$(basename "$file")
+	local comp_dir="$HOME/.local/share/zsh/completion"
+
+	if [ ! -f "$file" ]; then
+		echo "Error: file '$file' not found"
+		return 1
+	fi
+
+	mkdir -p "$comp_dir"
+	cp "$file" "$comp_dir"
+
+	add_once "fpath+=(\"$comp_dir\")"
+	add_once "autoload -Uz compinit && compinit"
+	add_source_once "$comp_dir/$fname"
+}
+
 main() {
 	template_dir="$HOME/ctemplate"
 	[ ! -d "$template_dir" ] && {
@@ -72,9 +91,8 @@ main() {
 
 	local utils="$template_dir/utils.sh"
 	local gitalias="$template_dir/git_alias.sh"
-	local completion="$template_dir/custom_completion.sh"
 
-	chmod +x "$utils" "$gitalias" "$completion" "$template_dir"/bin/* || {
+	chmod +x "$utils" "$gitalias" "$template_dir"/bin/* || {
 		printf "Error: Failed to set execute permissions.\n" >&2
 		return 1
 	}
@@ -82,8 +100,7 @@ main() {
 	add_once "# >>> ctemplate start >>>"
 	add_source_once "$utils"
 	add_source_once "$gitalias"
-	add_source_once "$completion"
-
+	add_custom_completion "$template_dir/custom_completion.zsh"
 	ensure_local_bin_in_path
 	add_once "# <<< ctemplate end <<<"
 
