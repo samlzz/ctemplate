@@ -70,7 +70,7 @@ srcs_fill() {
 		return 0
 	fi
 
-	sed -i.bak -E "/### UFILES_START ###/,/### END ###/c\\
+	sed -i -E "/### UFILES_START ###/,/### END ###/c\\
 ### UFILES_START ###\nFILES     ?= $file_list\n### END ###
 " "Makefile"
 
