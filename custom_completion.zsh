@@ -1,9 +1,10 @@
 # Completion for ftinit
 _ftinit() {
 	_arguments \
-		'--noMake[Do not use make]' \
-		'--nomake[Alias for --noMake]' \
-		'-nm[Alias for --noMake]'
+		'-r[Initialize as git repository]' \
+		'--repo[Initialize as git repository]' \
+		'-f[Add .clang-format file]' \
+		'--format[Add .clang-format file]'
 }
 compdef _ftinit ftinit
 
