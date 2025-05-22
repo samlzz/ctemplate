@@ -1,7 +1,13 @@
 #* Alias part
 
+# Replace ls with exa
+alias ls='exa --color=always --group-directories-first --icons'
+alias la='exa -a --color=always --group-directories-first --icons'  # all files and dirs
+alias ll='exa -l --color=always --group-directories-first --icons'  # long format
+alias lt='exa -T --color=always --group-directories-first --icons' # tree listing
+alias lta='exa -aT --color=always --group-directories-first --icons' # tree listing
+
 alias cl="clear"
-alias la="ls --all"
 alias vl="valgrind"
 alias vla="valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all --track-fds=yes"
 
